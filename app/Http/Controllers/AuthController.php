@@ -13,7 +13,7 @@ class AuthController extends Controller{
             'name' => 'string|required',
             'email' => 'required|email|string|unique:users,email',
             'phone' => 'required|string',
-            'driver_liencese' => 'required|string',
+            'driver_license' => 'required|string',
             'password' => ['required', 'confirmed', Password::min(8)->numbers()]
         ]);
 

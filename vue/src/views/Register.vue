@@ -2,8 +2,10 @@
     import { ref } from 'vue';
 
     import { userStore } from '../store/userStore';
-
+    import { useAlert } from '../../composables/useAlert';
     const storeUser = userStore();
+
+    const alert = useAlert();
 
     const userData = ref({
         name: '',
@@ -15,7 +17,20 @@
     });
 
     function handleRegister(){
-        console.log(userData.value)
+        storeUser.register(userData.value).then((res) => {
+            console.log(res)
+        }).catch(({response}) => {
+            let errors = response.data.errors;
+            let errorMessages = "";
+            Object.values(errors).forEach(err => {
+                err.forEach(e => {
+                    errorMessages = errorMessages + e + "\n";
+                })
+            })
+            console.log(errorMessages)
+            alert('Some errors occurred!', errorMessages, 'error');
+
+        })
     }
 </script>
 
@@ -28,7 +43,7 @@
                 Sign Up
             </div>
 
-            <input class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Fullname" type="text" id="name" v-model="userData.email"/>
+            <input class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Fullname" type="text" id="name" v-model="userData.name"/>
 
             <input class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Email" type="email" id="email" v-model="userData.email"/>
 
