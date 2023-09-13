@@ -42,7 +42,29 @@ const carros = [
 export const carStore = defineStore('car', {
     state(){
         return {
-            cars: carros
+            cars: []
+        }
+    },
+    actions: {
+        async getCars(){
+            return axiosClient.get("/car")
+                .then(({data}) => {
+                    this.$patch({
+                        cars: data.data
+                    })
+                })
+        },
+        async saveCar(data){
+            let response;
+            response = axiosClient.post("/car", data)
+                        .then((res) => {
+                            this.$patch({
+                                cars: [...this.cars, res.data]
+                            });
+                            console.log(res)
+                            return res.data;
+                        });
+            return response;
         }
     }
 });

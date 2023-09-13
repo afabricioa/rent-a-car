@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
+use App\Http\Resources\CarResource;
 use App\Models\Car;
+
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class CarController extends Controller
 {
@@ -13,19 +17,8 @@ class CarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function index(){
+        return CarResource::collection(Car::all());
     }
 
     /**
@@ -34,9 +27,17 @@ class CarController extends Controller
      * @param  \App\Http\Requests\StoreCarRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCarRequest $request)
-    {
-        //
+    public function store(StoreCarRequest $request){
+        $data = $request->validated();
+
+        if(isset($data['image'])){
+            $relativePath = $this->saveImage($data['image']);
+            $data['image'] = $relativePath;
+        }
+
+        $car = Car::create($data);
+
+        return new CarResource($car);
     }
 
     /**
@@ -79,8 +80,38 @@ class CarController extends Controller
      * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Car $car)
-    {
+    public function destroy(Car $car){
         //
+    }
+
+    private function saveImage($image){
+        if (preg_match('/^data:image\/(\w+);base64,/', $image, $type)) {
+            $image = substr($image, strpos($image, ',') + 1);
+
+            $type = strtolower($type[1]);
+
+            if(!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])){
+                throw new \Exception('invalid image type');
+            }
+            $image = str_replace(' ', '+', $image);
+            $image = base64_decode($image);
+
+            if($image === false){
+                throw new \Exception('base64_decode failed');
+            }
+        }else{
+            throw new \Exception('did not match data URI with data image');
+        }
+
+        $dir = 'images/';
+        $file = Str::random() . '.' . $type;
+        $absolutePath = public_path($dir);
+        $relativePath = $dir . $file;
+        if(!File::exists($absolutePath)){
+            File::makeDirectory($absolutePath, 0755, true);
+        }
+        file_put_contents($relativePath, $image);
+
+        return $relativePath;
     }
 }

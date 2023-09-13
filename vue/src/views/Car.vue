@@ -3,6 +3,8 @@
     import PageComponent from '../components/PageComponent.vue';
     import { carStore } from '../store/carStore';
     const storeCar = carStore();
+
+    storeCar.getCars();
 </script>
 
 <template>
@@ -13,7 +15,7 @@
         <div class="flex flex-wrap justify-center mt-10">
             <div class="grid grid-cols-3 gap-4">
                 <div v-for="car in storeCar.cars" class="bg-white shadow-md w-80 rounded-md p-2">
-                    <img :src="car.image" alt="" class="w-full h-48 object-cover" />
+                    <img :src="car.image_url" alt="" class="w-full h-48 object-cover" />
                     <h1 class="font-semibold text-gray-900 py-1">{{ car.model }}</h1>
                     <h3 class="font-medium text-gray-700 text-sm py-1">{{ car.brand }}</h3>
                     <div class="flex gap-2 py-1">
