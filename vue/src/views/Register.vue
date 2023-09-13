@@ -36,7 +36,7 @@
 
 <template>
     <div
-        class="bg-white text-black mt-10 w-1/2 h-1/4 flex justify-center items-center rounded-md"
+        class="bg-red-300 text-black mt-10 w-1/2 h-1/4 flex justify-center items-center rounded-md"
     >
         <form class="space-y-6 p-8 w-3/4" @submit.prevent="handleRegister()">
             <div class="mt-5 flex justify-center text-2xl">

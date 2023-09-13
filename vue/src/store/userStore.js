@@ -25,6 +25,33 @@ export const userStore = defineStore('user', {
                     sessionStorage.setItem('TOKEN', data.token);
                     return data;
                 })
+        },
+        async login(credentials){
+            return axiosClient.post('/login', credentials)
+                .then(({data}) => {
+                    this.$patch({
+                        user: {
+                            data: data.user,
+                            token: data.token
+                        }
+                    })
+                    sessionStorage.setItem('TOKEN', data.token);
+                    return data;
+                })
+        },
+
+        async logout(){
+            return axiosClient.post('/logout')
+                .then(response => {
+                    this.$patch({
+                        user: {
+                            data: {},
+                            token: null
+                        }
+                    });
+                    sessionStorage.clear();
+                    return response;
+                })
         }
     }
 })

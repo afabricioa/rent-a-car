@@ -6,10 +6,9 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use(config => {
-    const storeUser = userStore();
+    const storeUser  = userStore();
 
     config.headers.Authorization = `Bearer ${storeUser.user.token}`;
-
     return config;
 })
 

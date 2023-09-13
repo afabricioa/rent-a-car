@@ -1,6 +1,12 @@
 <script setup>
     import { ref } from 'vue';
-    import { RouterLink } from 'vue-router';
+    import { RouterLink, useRouter } from 'vue-router';
+    import { userStore } from '../store/userStore';
+    import { useAlert } from '../../composables/useAlert';
+
+    const storeUser = userStore();
+    const router = useRouter();
+    const alert = useAlert();
 
     const credentials = ref({
         email: '',
@@ -8,14 +14,21 @@
     });
 
     function handleLogin(){
-        console.log(credentials.value)
+        storeUser.login(credentials.value)
+            .then(() => {
+                router.push('/dashboard');
+            })
+            .catch(({response}) => {
+                let errorMessage = response.data.error;
+                alert('An error occurred', errorMessage, 'error');
+            });
     }
 
 </script>
 
 <template>
     <div
-        class="bg-white mt-10 w-1/4 h-1/4 flex justify-center items-center rounded-md"
+        class="bg-red-300 mt-10 w-1/4 h-1/4 flex justify-center items-center rounded-md"
     >
         <form class="space-y-6 p-8 w-full" @submit.prevent="handleLogin()">
             <div class="mt-5 flex justify-center font-size-18 text-black text-3xl">
