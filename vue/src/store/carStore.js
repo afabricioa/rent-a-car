@@ -20,7 +20,6 @@ export const carStore = defineStore('car', {
         async saveCar(data){
             let response;
             if(data.id){
-                console.log(data)
                 response = axiosClient.put(`/car/${data.id}`, data)
                     .then((res) => {
                         this.$patch({
@@ -51,6 +50,9 @@ export const carStore = defineStore('car', {
                         return data;
                     })
 
+        },
+        async deleteCar(id){
+            return axiosClient.delete(`/car/${id}`);
         }
     }
 });

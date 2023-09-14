@@ -2,7 +2,6 @@
     import { RouterView, RouterLink, useRouter } from 'vue-router';
     import { ref } from 'vue';
     import { userStore } from '../store/userStore';
-
     const storeUser = userStore();
     const router = useRouter();
 
@@ -28,7 +27,7 @@
             <div class="flex lg:flex-1">
                 <a href="#" class="-m-1.5 p-1.5">
                 <span class="sr-only">Your Company</span>
-                <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+                <img class="h-8 w-auto" src="../assets/rent.png" alt="" />
                 </a>
             </div>
             <div class="hidden lg:flex lg:gap-x-12">
@@ -44,7 +43,7 @@
                 <div class="flex items-center justify-between">
                 <a href="#" class="-m-1.5 p-1.5">
                     <span class="sr-only">Your Company</span>
-                    <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+                    <img class="h-8 w-auto" src="../assets/rent.png" alt="" />
                 </a>
                 <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" @click="mobileMenuOpen = false">
                     <span class="sr-only">Close menu</span>
@@ -66,3 +65,10 @@
     </header>
     <RouterView/>
 </template>
+
+<style scoped>
+    .cls-1{fill:#020000;}
+    .cls-2{font-size:21.43px;}
+    .cls-2,.cls-3{fill:blue;font-family:Bauhaus93, "Bauhaus 93";}
+    .cls-3{font-size:21.43px;}
+</style>

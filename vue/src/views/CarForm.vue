@@ -1,7 +1,7 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { carStore } from '../store/carStore';
-    import { useRoute, useRouter } from "vue-router";
+    import { useRoute, useRouter, RouterLink } from "vue-router";
     import { useAlert } from "../../composables/useAlert";
 
     const route = useRoute();
@@ -19,17 +19,22 @@
         transmission: '',
         available: true,
         image: null,
-        image_url: null
+        image_url: null,
+        licenses: ''
     });
 
-    const carTypes = ['Hatch', 'Sedan', 'Sedan Sport', 'SUV', 'Compact'];
+    const licensesSelected = ref([]);
+
+    const carTypes = ['Hatch', 'Sedan', 'Sedan Sport', 'SUV', 'Compact', 'Truck'];
+    const licenses = ['A', 'B', 'C', 'D', 'E'];
 
     if(route.params.id){
         storeCar.getCar(route.params.id);
     }
 
     watch(storeCar.showCar, () => {
-        car.value = storeCar.showCar
+        car.value = storeCar.showCar;
+        licensesSelected.value = car.value.licenses.split('/');
     });
 
     function onImageChange(ev){
@@ -47,26 +52,63 @@
 
     function handleSaveCar(){
         car.value.price = parseFloat(car.value.price);
+        car.value.licenses = licensesSelected.value.join('/');
         storeCar.saveCar(car.value)
             .then(() => {
-                alert('Success', 'The register was saved', 'success')
+                alert('Success', 'The register was saved', 'success');
+                if(!route.params.id){
+                    router.push('/car')
+                }
             })
             .catch(({response}) => {
-                let errors = response.data.errors;
-                let errorMessages = "";
-                Object.values(errors).forEach(err => {
-                    err.forEach(e => {
-                        errorMessages = errorMessages + e + "\n";
+                if(response && response.data && response.data.errors){
+                    let errors = response.data.errors;
+                    let errorMessages = "";
+                    Object.values(errors).forEach(err => {
+                        err.forEach(e => {
+                            errorMessages = errorMessages + e + "\n";
+                        })
                     })
-                })
-                alert('Some errors occurred!', errorMessages, 'error');
+                    alert('Some errors occurred!', errorMessages, 'error');
+                }else{
+                    alert('ERROR!', 'Some error occurred, contact system administrator.', 'error');
+                }
             })
+    }
+
+    function handleDeleteCar(id){
+        swal({
+            title: 'Warning!',
+            text: 'You are deleting a record, are you sure?',
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true
+        })
+        .then((willDelete) => {
+            if(willDelete){
+                storeCar.deleteCar(id).then((res) => {
+                    swal("Success!", "Register deleted with success!", "success");
+                    router.push('/car')
+                })
+            }
+        })
+    }
+
+    function handleSelect(lc){
+        if(licensesSelected.value.includes(lc)){
+            let index = licensesSelected.value.indexOf(lc);
+            licensesSelected.value.splice(index, 1);
+        }else{
+            licensesSelected.value.push(lc);
+        }
     }
 </script>
 
 <template>
-    <div class="flex justify-center">
+    <div :class="[route.params.id ? 'flex justify-between' : 'grid grid-cols-3']">
+        <RouterLink class="ml-10 px-2 font-bold font-large hover:text-blue-500" to="/car"><span>&larr;</span>Voltar</RouterLink>
         <h1 class="text-2xl font-semibold">{{ route.params.id ? "Car Details" : "Type information about the new car"}}</h1>
+        <button v-show="route.params.id" @click="handleDeleteCar(route.params.id)" class="mr-10 bg-red-500 p-2 rounded-md text-white hover:bg-red-900">Delete</button>
     </div>
     <form @submit.prevent="handleSaveCar">
         <div class="p-8 shadow sm:rounded-md sm:overflow-hidden">
@@ -201,6 +243,24 @@
                             v-model="car.price"
                             class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 w-80 block shadow-sm sm:text-sm border-gray-300 rounded-md"
                         />
+                    </div>
+                    <div>
+                        <label for="license" class="p-5 block text-sm font-medium text-gray-700">
+                            Select licenses to drive this car.
+                        </label>
+                        <div class="flex">
+                            <div class="p-3" v-for="license in licenses">
+                                <input
+                                    type="checkbox"
+                                    :id="license"
+                                    :name="license"
+                                    @change="handleSelect(license)"
+                                    class="rounded-sm"
+                                    :checked="licensesSelected.includes(license)"
+                                />
+                                <label class="px-2 mt-2" :for="license">{{ license }}</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

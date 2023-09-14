@@ -28,9 +28,12 @@
 
 <template>
     <div
-        class="bg-red-300 mt-10 w-1/4 h-1/4 flex justify-center items-center rounded-md"
+        class="shadow-lg mt-10 w-1/4 h-1/4 flex justify-center items-center rounded-md"
     >
         <form class="space-y-6 p-8 w-full" @submit.prevent="handleLogin()">
+            <div class="flex justify-center">
+                <img src="../assets/rent.png" alt=""/>
+            </div>
             <div class="mt-5 flex justify-center font-size-18 text-black text-3xl">
                 Login
             </div>

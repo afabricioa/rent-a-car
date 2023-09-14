@@ -1,10 +1,33 @@
 <script setup>
     import { RouterLink } from 'vue-router';
+    import swal from 'sweetalert';
     import PageComponent from '../components/PageComponent.vue';
     import { carStore } from '../store/carStore';
+
+    import { TrashIcon } from '@heroicons/vue/24/solid'
+
     const storeCar = carStore();
 
     storeCar.getCars();
+
+    function handleDeleteCar(id){
+        swal({
+            title: 'Warning!',
+            text: 'You are deleting a record, are you sure?',
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true
+        })
+        .then((willDelete) => {
+            console.log(willDelete)
+            if(willDelete){
+                storeCar.deleteCar(id).then((res) => {
+                    swal("Success!", "Register deleted with success!", "success");
+                    storeCar.getCars();
+                })
+            }
+        })
+    }
 </script>
 
 <template>
@@ -26,6 +49,16 @@
                     <div class="flex gap-2 py-1">
                         <h3 class="font-medium text-gray-700 text-sm">
                             Passengers: {{ car.passengers }}</h3>
+                    </div>
+                    <div class="flex justify-between p-2">
+                        <router-link
+                            :to="{name: 'CarView', params: {id: car.id}}"
+                            class="rounded-md bg-violet-500 p-2 text-white hover:bg-violet-800">
+                            Details
+                        </router-link>
+                        <button @click="handleDeleteCar(car.id)">
+                            <TrashIcon class="h-6 w-6 text-red-500" />
+                        </button>
                     </div>
                 </div>
             </div>

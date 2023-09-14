@@ -93,7 +93,9 @@ class CarController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Car $car){
-        //
+        $car->delete();
+
+        return response('', 204);
     }
 
     private function saveImage($image){

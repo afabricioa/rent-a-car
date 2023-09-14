@@ -31,7 +31,8 @@ class UpdateCarRequest extends FormRequest
             'price' => 'required|numeric',
             'passengers' => 'required|integer',
             'transmission' => 'required|string',
-            'image' => 'string'
+            'image' => 'string',
+            'licenses' => 'string|required'
         ];
     }
 }

@@ -31,7 +31,8 @@ class StoreCarRequest extends FormRequest
             'price' => 'required|numeric',
             'passengers' => 'required|integer',
             'transmission' => 'required|string',
-            'image' => 'required'
+            'image' => 'required',
+            'licenses' => 'string|required'
         ];
     }
 }

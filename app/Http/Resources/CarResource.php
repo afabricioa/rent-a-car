@@ -27,7 +27,8 @@ class CarResource extends JsonResource
             'transmission' => $this->transmission,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'image_url' => $this->image ? URL::to($this->image) : null
+            'image_url' => $this->image ? URL::to($this->image) : null,
+            'licenses' => $this->licenses
         ];
     }
 }
