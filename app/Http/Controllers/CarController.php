@@ -46,9 +46,8 @@ class CarController extends Controller
      * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function show(Car $car)
-    {
-        //
+    public function show(Car $car){
+        return new CarResource($car);
     }
 
     /**
@@ -69,9 +68,22 @@ class CarController extends Controller
      * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCarRequest $request, Car $car)
-    {
-        //
+    public function update(UpdateCarRequest $request, Car $car){
+        $data = $request->validated();
+
+        if(isset($data['image'])){
+            $relativePath = $this->saveImage($data['image']);
+            $data['image'] = $relativePath;
+
+            if($car->image){
+                $absolutePath = public_path($car->image);
+                File::delete($absolutePath);
+            }
+        }
+
+        $car->update($data);
+
+        return new CarResource($car);
     }
 
     /**

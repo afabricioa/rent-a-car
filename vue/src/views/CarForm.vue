@@ -1,8 +1,13 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
     import { carStore } from '../store/carStore';
+    import { useRoute, useRouter } from "vue-router";
+    import { useAlert } from "../../composables/useAlert";
 
+    const route = useRoute();
+    const router = useRouter();
     const storeCar = carStore();
+    const alert = useAlert();
 
     const car = ref({
         model:'',
@@ -13,10 +18,19 @@
         price: '',
         transmission: '',
         available: true,
-        image: ''
+        image: null,
+        image_url: null
     });
 
     const carTypes = ['Hatch', 'Sedan', 'Sedan Sport', 'SUV', 'Compact'];
+
+    if(route.params.id){
+        storeCar.getCar(route.params.id);
+    }
+
+    watch(storeCar.showCar, () => {
+        car.value = storeCar.showCar
+    });
 
     function onImageChange(ev){
         const file = ev.target.files[0];
@@ -24,6 +38,8 @@
 
         reader.onload = () => {
             car.value.image = reader.result;
+            car.value.image_url = reader.result;
+            ev.target.value = "";
         };
 
         reader.readAsDataURL(file);
@@ -32,23 +48,30 @@
     function handleSaveCar(){
         car.value.price = parseFloat(car.value.price);
         storeCar.saveCar(car.value)
-            .then((res) => {
-                console.log(res)
+            .then(() => {
+                alert('Success', 'The register was saved', 'success')
             })
-            .catch(err => {
-                console.log(err)
-            });
+            .catch(({response}) => {
+                let errors = response.data.errors;
+                let errorMessages = "";
+                Object.values(errors).forEach(err => {
+                    err.forEach(e => {
+                        errorMessages = errorMessages + e + "\n";
+                    })
+                })
+                alert('Some errors occurred!', errorMessages, 'error');
+            })
     }
 </script>
 
 <template>
     <div class="flex justify-center">
-        <h1 class="text-2xl font-semibold">Type information about the new car</h1>
+        <h1 class="text-2xl font-semibold">{{ route.params.id ? "Car Details" : "Type information about the new car"}}</h1>
     </div>
     <form @submit.prevent="handleSaveCar">
         <div class="p-8 shadow sm:rounded-md sm:overflow-hidden">
             <div class="flex justify-center">
-                <img v-if="car.image" :src="car.image" :alt="car.model" class="w-64 h-48 object-cover" />
+                <img v-if="car.image_url" :src="car.image_url" :alt="car.model" class="w-96 h-48 object-cover" />
                 <span
                     v-else
                     class="flex items-center justify-center

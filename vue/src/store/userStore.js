@@ -5,7 +5,7 @@ export const userStore = defineStore('user', {
     state(){
         return {
             user: {
-                data: {},
+                data: JSON.parse(sessionStorage.getItem('USER')),
                 token: sessionStorage.getItem('TOKEN')
             },
             licenses: ['A', 'B', 'C', 'D', 'E']
@@ -29,12 +29,14 @@ export const userStore = defineStore('user', {
         async login(credentials){
             return axiosClient.post('/login', credentials)
                 .then(({data}) => {
+                    console.log(data)
                     this.$patch({
                         user: {
                             data: data.user,
                             token: data.token
                         }
                     })
+                    sessionStorage.setItem('USER', JSON.stringify(data.user));
                     sessionStorage.setItem('TOKEN', data.token);
                     return data;
                 })

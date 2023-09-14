@@ -8,6 +8,9 @@ import Car from "../views/Car.vue";
 import CarForm from "../views/CarForm.vue";
 import Rent from "../views/Rent.vue";
 import { userStore } from "../store/userStore";
+import { useAlert } from "../../composables/useAlert";
+
+const alert = useAlert();
 
 const router = createRouter({
     history: createWebHistory(),
@@ -21,7 +24,8 @@ const router = createRouter({
                 {path: '/dashboard', name: 'Dashboard', component: Dashboard},
                 {path: '/car', name: 'Car', component: Car},
                 {path: '/rent', name: 'Rent', component: Rent},
-                {path: '/car/form', name: 'CarForm', component: CarForm}
+                {path: '/car/form', name: 'CarForm', component: CarForm},
+                {path: '/car/form/:id', name: 'CarView', component: CarForm}
             ]
         },
         {
@@ -51,6 +55,9 @@ router.beforeEach((to, from, next) => {
     if(to.meta.requiresAuth && !storeUser.user.token){
         next({name: 'Login'})
     } else if(storeUser.user.token && to.meta.isGuest){
+        next({name: 'Dashboard'})
+    } else if(to.name === 'Car' && storeUser.user.data.is_admin === 0){
+        alert('Warning', 'You don`t have permission to access this page', 'warning')
         next({name: 'Dashboard'})
     } else {
         next()
