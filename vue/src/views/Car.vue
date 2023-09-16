@@ -8,7 +8,7 @@
 
     const storeCar = carStore();
 
-    storeCar.getCars();
+    storeCar.getCars('All');
 
     function handleDeleteCar(id){
         swal({
@@ -36,7 +36,7 @@
             <RouterLink class="bg-emerald-500 p-2 rounded-md text-white hover:bg-emerald-300" to="/car/form">New Car</RouterLink>
         </template>
         <div class="flex flex-wrap justify-center mt-10">
-            <div class="grid grid-cols-3 gap-4">
+            <div v-if="storeCar.cars.length > 0" class="grid grid-cols-3 gap-4">
                 <div v-for="car in storeCar.cars" class="bg-white shadow-md w-80 rounded-md p-2">
                     <img :src="car.image_url" alt="" class="w-full h-48 object-cover" />
                     <h1 class="font-semibold text-gray-900 py-1">{{ car.model }}</h1>
@@ -61,6 +61,9 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            <div v-else class="bg-gray-300 rounded-md p-5">
+                No records where found...
             </div>
         </div>
     </PageComponent>

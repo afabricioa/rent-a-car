@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
@@ -17,8 +18,18 @@ class CarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(){
-        return CarResource::collection(Car::all());
+    public function index(Request $request){
+        $data = $request->validate([
+            'category' => 'string'
+        ]);
+
+        if($data['category'] !== 'All'){
+            $cars = CarResource::collection(Car::where('type', $data['category'])->get());
+
+        }else{
+            $cars = CarResource::collection(Car::all());
+        }
+        return $cars;
     }
 
     /**
