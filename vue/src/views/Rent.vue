@@ -101,6 +101,23 @@
                 <MagnifyingGlassCircleIcon class="h-12 w-12 text-emerald-600 hover:text-emerald-400"/>
             </button>
         </div>
+        <h1 v-if="storeCar.cars.length > 0" class="flex justify-center p-5 text-bold text-2xl">Available Cars</h1>
+        <div v-for="car in storeCar.cars" class="bg-white shadow-lg p-2 mt-3 flex">
+            <img :src="car.image_url" alt="" class="w-1/2 h-48 object-cover rounded-md" />
+            <div class="flex justify-between w-full">
+                <div class="p-2 ml-5">
+                    <h1 class="text-2xl">{{ car.model }}</h1>
+                    <h1 class="text-gray-500 mt-2">{{ car.brand }}</h1>
+                    <h1 class="text-gray-800 mt-2">{{ car.type }}</h1>
+                </div>
+                <div class="m-5 p-10 flex">
+                    {{ car.price }}
+                    <button>
+                        View Deal
+                    </button>
+                </div>
+            </div>
+        </div>
     </PageComponent>
 </template>
 

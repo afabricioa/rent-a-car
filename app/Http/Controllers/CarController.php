@@ -24,7 +24,10 @@ class CarController extends Controller
         ]);
 
         if($data['category'] !== 'All'){
-            $cars = CarResource::collection(Car::where('type', $data['category'])->get());
+            $cars = CarResource::collection(Car::where('type', $data['category'])
+                ->where('available', 1)
+                ->get()
+            );
 
         }else{
             $cars = CarResource::collection(Car::all());

@@ -4,7 +4,7 @@
     import PageComponent from '../components/PageComponent.vue';
     import { carStore } from '../store/carStore';
 
-    import { TrashIcon } from '@heroicons/vue/24/solid'
+    import { TrashIcon } from '@heroicons/vue/24/solid';
 
     const storeCar = carStore();
 
@@ -19,11 +19,10 @@
             dangerMode: true
         })
         .then((willDelete) => {
-            console.log(willDelete)
             if(willDelete){
                 storeCar.deleteCar(id).then((res) => {
                     swal("Success!", "Register deleted with success!", "success");
-                    storeCar.getCars();
+                    storeCar.getCars('All');
                 })
             }
         })
@@ -39,7 +38,11 @@
             <div v-if="storeCar.cars.length > 0" class="grid grid-cols-3 gap-4">
                 <div v-for="car in storeCar.cars" class="bg-white shadow-md w-80 rounded-md p-2">
                     <img :src="car.image_url" alt="" class="w-full h-48 object-cover" />
-                    <h1 class="font-semibold text-gray-900 py-1">{{ car.model }}</h1>
+                    <div class="flex justify-between py-1">
+                        <h1 class="font-semibold text-gray-900 py-1">{{ car.model }}</h1>
+                        <div v-if="car.available === 1" class="bg-emerald-500 text-white text-sm font-semibold p-2 rounded-full shadow-lg">Available</div>
+                        <div v-else class="bg-red-500 text-white text-sm font-semibold p-2 rounded-full shadow-lg">Unavailable</div>
+                    </div>
                     <h3 class="font-medium text-gray-700 text-sm py-1">{{ car.brand }}</h3>
                     <div class="flex gap-2 py-1">
                         <h3 class="font-medium text-gray-700 text-sm">{{ car.type }}</h3>
