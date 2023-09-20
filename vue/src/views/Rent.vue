@@ -3,16 +3,16 @@
     import PageComponent from '../components/PageComponent.vue';
     import { MagnifyingGlassCircleIcon, UserIcon } from '@heroicons/vue/24/solid'
     import { carStore } from '../store/carStore';
+    import moment from 'moment';
 
     const storeCar = carStore();
-
     const searchInfo = ref({
-        start_date: '',
-        end_date: '',
+        start_date: moment().format('YYYY-MM-DD'),
+        end_date: moment().add(1, 'days').format('YYYY-MM-DD'),
         type: 'All'
     });
 
-    const totalDays = ref(0);
+    const totalDays = ref(1);
 
     watch(
         () => new Date(searchInfo.value.end_date).getTime() - new Date(searchInfo.value.start_date).getTime(),
@@ -63,6 +63,10 @@
         storeCar.getCars(searchInfo.value.type);
     }
 
+    function handleSelectPrice(e){
+        console.log(e)
+    }
+
 </script>
 
 <template>
@@ -96,7 +100,7 @@
             </div>
             <div>
                 <label for="end_date" class="p-5 block text-sm font-medium text-gray-700">
-                    Start Date
+                    End Date
                 </label>
                 <input
                     type="date"
@@ -110,13 +114,58 @@
                 <MagnifyingGlassCircleIcon class="h-12 w-12 text-emerald-600 hover:text-emerald-400"/>
             </button>
         </div>
-        <h1 v-if="storeCar.cars.length > 0" class="flex justify-center p-5 text-bold text-2xl">Available Cars</h1>
-        <div class="flex gap-4">
-            <div class="p-2 mt-3 w-1/4 flex justify-between border-solid border-2 rounded-md">
-                <h1 class="p-1 h-10 text-bold text-2xl">Filter</h1>
-                <h1 class="p-3 h-10 text-blue-400 hover:text-blue-700">Clear All Filters</h1>
+        <h1 v-if="storeCar.cars.length > 0" class="flex justify-center p-5 text-bold text-2xl">{{ `${storeCar.cars.length} available cars` }}</h1>
+        <div v-if="storeCar.cars.length > 0" class="lg:flex gap-4">
+            <div class="p-2 mt-3 lg:w-1/4 border-solid border-2 rounded-md">
+                <div class="flex justify-between border-b-2">
+                    <h1 class="p-1 h-10 text-bold text-2xl">Filter</h1>
+                    <h1 class="p-3 h-10 text-blue-400 hover:text-blue-700 cursor-pointer">Clear All Filters</h1>
+                </div>
+                <div class="p-2 mt-2">
+                    <h1>Price Per Day</h1>
+                    <div class="py-1">
+                        <input
+                            type="checkbox"
+                            @change="handleSelectPrice([0, 50])"
+                            class="rounded-sm w-5 h-5"
+                            id="050"
+                            name="050"
+                        />
+                        <label class="p-1" for="050">$50-$100</label>
+                    </div>
+                    <div class="py-1">
+                        <input
+                            type="checkbox"
+                            @change="handleSelectPrice([50,100])"
+                            class="rounded-sm w-5 h-5"
+                            id="50100"
+                            name="50100"
+                        />
+                        <label class="p-1" for="50100">$50-$100</label>
+                    </div>
+                    <div class="py-1">
+                        <input
+                            type="checkbox"
+                            @change="handleSelectPrice([100,200])"
+                            class="rounded-sm w-5 h-5"
+                            id="100200"
+                            name="100200"
+                        />
+                        <label class="p-1" for="100200">$100-$200</label>
+                    </div>
+                    <div class="py-1">
+                        <input
+                            type="checkbox"
+                            @change="handleSelectPrice([200])"
+                            class="rounded-sm w-5 h-5"
+                            id="200plus"
+                            name="200plus"
+                        />
+                        <label class="p-1" for="200plus">$200+</label>
+                    </div>
+                </div>
             </div>
-            <div class="w-3/4">
+            <div class="lg:w-3/4">
                 <div v-for="car in storeCar.cars" class="bg-white shadow-lg p-2 mt-3 flex rounded-md border-solid border-2 border-gray-200">
                     <div class="w-1/3">
                         <img :src="car.image_url" alt="" class="w-full h-48 object-cover rounded-md" />
@@ -137,7 +186,7 @@
                                         {{ car.transmission }}
                                     </div>
                                     <div>
-                                        {{ `Licenses to drive: ${car.licenses.split('/').sort()}` }}
+                                        {{ `Licenses to drive: ${car.licenses.length > 2 ? car.licenses.split('/').sort() : car.licenses.replace('/', '')}` }}
                                     </div>
                                 </div>
                             </div>
